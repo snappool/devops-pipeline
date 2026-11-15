@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-       version = os.getenv("APP_VERSION", "dev")
+    version = os.getenv("APP_VERSION", "dev")
     return jsonify(message="Hello from the DevOps pipeline!", version=version)
 
 @app.route("/health")
