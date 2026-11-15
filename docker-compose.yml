@@ -1,0 +1,15 @@
+# docker-compose describes how to run one or more containers together.
+# Start everything with:   docker compose up --build
+services:
+  web:
+    build: .            # build the image from the Dockerfile in this folder
+    ports:
+      - "5000:5000"     # host port : container port
+    environment:
+      - APP_VERSION=compose
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
