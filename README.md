@@ -1,3 +1,5 @@
+![CI](https://github.com/snappool/devops-pipeline/actions/workflows/ci.yml/badge.svg)
+
 # DevOps Pipeline Project
 
 A small Flask app with a complete delivery pipeline around it:
