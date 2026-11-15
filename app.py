@@ -12,6 +12,7 @@ def home():
     version = os.getenv("APP_VERSION", "dev")
     return jsonify(message="Hello from the DevOps pipeline!", version=version)
 
+
 @app.route("/health")
 def health():
     # Docker, Kubernetes and load balancers call an endpoint like this
