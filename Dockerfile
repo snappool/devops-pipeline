@@ -23,7 +23,7 @@ COPY --from=builder /install /usr/local
 
 # Copy the app code last: code changes often, so Docker can reuse
 # the cached layers above and rebuild faster.
-COPY app.py .
+COPY app.py db.py ./
 
 ENV APP_VERSION=1.0.0
 USER appuser

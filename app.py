@@ -4,6 +4,8 @@ import os
 
 from flask import Flask, jsonify, request
 
+import db
+
 app = Flask(__name__)
 
 
@@ -24,6 +26,16 @@ def health():
 def greet():
     name = request.args.get("name", "world")
     return jsonify(greeting=f"Hello, {name}!")
+
+
+@app.route("/visits")
+def visits():
+    # Each call adds 1 to a counter stored in Postgres.
+    try:
+        count = db.increment_visits()
+    except Exception as exc:
+        return jsonify(error="database unavailable", detail=str(exc)), 503
+    return jsonify(visits=count)
 
 
 if __name__ == "__main__":

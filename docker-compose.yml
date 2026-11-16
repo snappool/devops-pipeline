@@ -1,15 +1,41 @@
-# docker-compose describes how to run one or more containers together.
+# docker-compose describes how to run several containers together.
 # Start everything with:   docker compose up --build
+# Stop (keep data):        docker compose down
+# Stop and DELETE data:    docker compose down -v
 services:
   web:
-    build: .            # build the image from the Dockerfile in this folder
+    build: .
     ports:
-      - "5000:5000"     # host port : container port
+      - "5000:5000"
     environment:
       - APP_VERSION=compose
+      # postgresql://user:password@host:port/database
+      # The host is "db": compose lets containers reach each other by service name.
+      - DATABASE_URL=postgresql://appuser:apppass@db:5432/appdb
+    depends_on:
+      db:
+        condition: service_healthy   # wait until Postgres is ready
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
       interval: 15s
       timeout: 3s
       retries: 3
+
+  db:
+    image: postgres:16-alpine        # ready-made image, no Dockerfile needed
+    environment:
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD=apppass    # fine for learning; real projects use secrets
+      - POSTGRES_DB=appdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # keeps data after the container is removed
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+# A named volume: storage managed by Docker that outlives containers
+volumes:
+  pgdata:
